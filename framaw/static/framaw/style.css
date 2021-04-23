@@ -1,0 +1,131 @@
+:root {
+    --font-color: black;
+    --menu-font-color: white;
+    --menu: #f2f2f2;
+    --menu-border: #f1f1f1;
+    --background-sides: #f1f1f1;
+    --background-main: white;
+    --background-menu: black;
+    --background-menu-hover: #ddd;
+    --background-menu-active: #ccc;
+}
+/*:root {
+    --font-color: #1c8504;
+    --menu-font-color: #1c8504;
+    --menu-border: #2d2b2b;
+    --background-sides: #2d2b2b;
+    --background-main: black;
+    --background-menu: black;
+    --background-menu-hover: #a7a7a7;
+    --background-menu-active: #1c8504;
+}*/
+
+body {
+    color: var(--font-color);
+    background-color: var(--background-sides);
+}
+
+.menu_bar {
+    display: flex;
+    background-color: var(--background-menu);
+    height: 45px;
+    border-bottom: 5px solid var(--menu-border);
+}
+
+.menu_bar a {
+    color: var(--menu-font-color);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.menu_bar a:hover {
+    background-color: var(--background-menu-hover);
+    color: black;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.side {
+    padding: 10px 30px 10px 0;
+    overflow: auto;
+}
+
+.focus {
+    padding: 15px;
+    overflow: auto;
+}
+
+.main {
+    background-color: var(--background-main);
+    padding: 10px;
+    overflow: auto;
+    height: calc(75vh - 45px);
+}
+
+.file_list {
+    list-style-type: square;
+}
+
+.file_list > li {
+    font-family: monospace;
+}
+
+.tab_data {
+    background-color: var(--background-main);
+    overflow: auto;
+    height: calc(24vh - 45px);
+}
+
+.tab {
+    overflow: auto;
+    background-color: var(--background-sides);
+}
+
+.tab button {
+    color: var(--menu-font-color);
+    background-color: var(--background-menu);
+    cursor: pointer;
+    padding: 7px 8px;
+}
+
+.tab button:hover {
+    background-color: var(--background-menu-hover);
+}
+
+.tab button.active {
+    background-color: var(--background-menu-active);
+}
+
+.data {
+    padding: 5px;
+    background-color: var(--background-main);
+    overflow: auto;
+}
+
+@media all and (max-width: 799px) {
+    .main { flex: 100%; }
+    .side {
+        height: auto;
+        flex: 100%;
+    }
+    .focus {
+        height: auto;
+        flex: 100%;
+    }
+    .tab_data { flex: 100%; }
+}
+
+@media all and (min-width: 800px) {
+    .main { flex: 60%; }
+    .side {
+        float: left;
+        flex: 20%;
+        height: calc(95vh - 45px);
+    }
+    .focus { flex: 20%; }
+    .tab_data {flex: 80%; }
+}

@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>bootleg Frama-C</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'framaw/style.css' %}">
+</head>
+
+<body>
+<div class="menu_bar">
+    <a href="#">File</a>
+    <a href="#">Edit</a>
+    <a href="#">View</a>
+</div>
+
+<div class="side">
+    <div class="file_select">
+        <ul class="file_list">
+            <li>main.c</li>
+            <li>lib.h</li>
+            <li>lib.c</li>
+            <li>main.c</li>
+            <li>lib.h</li>
+            <li>lib.c</li>
+            <li>main.c</li>
+            <li>lib.h</li>
+            <li>lib.c</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="main">
+        <div class="text_field">
+            <pre><code>
+int checkPrime(int n);
+
+int main() {
+    int n, i, flag = 0;
+    printf("Enter a positive integer: ");
+    scanf("%d", &n);
+
+    for (i = 2; i <= n / 2; ++i) {
+        // condition for i to be a prime number
+        if (checkPrime(i) == 1) {
+            // condition for n-i to be a prime number
+            if (checkPrime(n - i) == 1) {
+                printf("%d = %d + %d\n", n, i, n - i);
+                flag = 1;
+            }
+        }
+    }
+    if (flag == 0)
+        printf("%d cannot be expressed as the sum of two prime numbers.", n);
+
+    return 0;
+}
+
+// function to check prime number
+int checkPrime(int n) {
+    int i, isPrime = 1;
+    for (i = 2; i <= n / 2; ++i) {
+        if (n % i == 0) {
+            isPrime = 0;
+            break;
+        }
+    }
+    return isPrime;
+}
+            </code></pre>
+        </div>
+    </div>
+    <div class="focus">
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    </div>
+    <div class="tab_data">
+        <div class="tab">
+            <button>Provers</button>
+            <button>VCs</button>
+            <button>RESULT</button>
+        </div>
+        <div class="data">
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        </div>
+    </div>
+</div>
+</body>
+</html>
