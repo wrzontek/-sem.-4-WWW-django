@@ -1,0 +1,19 @@
+{% for dir in dirs %}
+    {% if dir.parent_dir|stringformat:"s" == parent|stringformat:"s" %}
+        <li>
+            {{ dir.name }}
+
+            <ul class="file_list">
+                {% for file in files %}
+                    {% if file.directory == dir %}
+                        <li>{{file.name}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+            <ul class="file_list">
+                {% include "framaw/file_menu.html" with parent=dir.name %}
+            </ul>
+        </li>
+    {% endif %}
+{% endfor %}
