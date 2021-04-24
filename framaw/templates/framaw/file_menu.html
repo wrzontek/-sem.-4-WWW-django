@@ -1,7 +1,7 @@
 {% for dir in dirs %}
     {% if dir.valid and dir.parent_dir|stringformat:"s" == parent|stringformat:"s" %}
         <li>
-            {{ dir.name }}
+            <b>{{ dir.name }}</b>
 
             <ul class="file_list">
                 {% for file in files %}

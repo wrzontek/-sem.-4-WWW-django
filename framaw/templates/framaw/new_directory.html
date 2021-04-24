@@ -1,14 +1,16 @@
-<form action="{% url 'create_file' %}" method="post">
+<form action="{% url 'create_directory' %}" method="post">
 {% csrf_token %}
-Select parent directory for new file:<br>
+Select parent directory (or none):<br>
 
     TODO MOZNA CALA SCIEZKE WYPISAC<br>
+        <input type="radio" name="parent_dir" id="dir_none" value="">
+        <label for="dir_none">None</label><br>
     {% for dir in dirs %}
         <input type="radio" name="parent_dir" id="dir{{ forloop.counter }}" value="{{ dir.id }}">
         <label for="dir{{ forloop.counter }}">{{ dir.name }}</label><br>
     {% endfor %}
 
-    <label>Filename
+    <label>Name
         <input type="text" name="name">
     </label><br>
 
@@ -19,10 +21,6 @@ Select parent directory for new file:<br>
     <label>Description<br>
         <input type="text" name="description" style="width: 20vw; height: 20vh">
     </label><br>
-
-    <label>Content<br>
-        <input type="text" name="content" style="width: 60vw; height: 50vh">
-    </label>
 <br>
 <input type="submit" value="Create">
 </form>
