@@ -36,6 +36,7 @@ class File(models.Model):
     description = models.CharField(max_length=200, default="")
     creation_date = models.DateTimeField(default=timezone.now)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
+    content = models.CharField(max_length=3000, default="")
 
     valid = models.BooleanField(default=True)
     timestamp = models.DateTimeField(default=timezone.now)

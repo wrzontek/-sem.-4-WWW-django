@@ -1,5 +1,5 @@
 {% for dir in dirs %}
-    {% if dir.parent_dir|stringformat:"s" == parent|stringformat:"s" %}
+    {% if dir.valid and dir.parent_dir|stringformat:"s" == parent|stringformat:"s" %}
         <li>
             {{ dir.name }}
 
