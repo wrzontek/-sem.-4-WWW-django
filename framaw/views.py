@@ -1,3 +1,5 @@
+import io
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
@@ -63,8 +65,61 @@ def new_file(request):
 #     return index(request)
 
 
-def parse_file_content(content):
-    pass
+def parse_file_content(content, file):
+    buf = io.StringIO(content)
+    frama_block = False
+    line_number = 0
+    have_line = False
+    keywords = ["predicate", "requires", "ensures", "loop invariant", "loop variant", "assert", "assumes"]
+    line = ""
+
+    while True:
+        if not have_line:
+            line = buf.readline()
+            line_number += 1
+            line.strip()
+        if len(line) == 0:
+            break
+
+        have_line = False
+
+        if "//@" in line:
+            new_file_section = FileSection(file=file, line_number=line_number, content=line)
+            new_file_section.save()  # TODO category(keyword), status, data
+            frama_block = False
+
+        else:
+            if "/*@" in line:
+                frama_block = True
+            elif "@*/" in line:
+                frama_block = False
+
+            if frama_block:
+                content = ""
+                cont = True
+                fs_line_number = line_number
+                while cont:     # kończymy sekcję gdy napotkamy kolejną lub koniec bloku
+                    content += line
+                    line = buf.readline()
+                    line_number += 1
+                    line.strip()
+                    if "@*/" in line:
+                        have_line = True
+                        frama_block = False
+                        cont = False
+                    else:
+                        for keyword in keywords:
+                             if keyword in line:
+                                have_line = True
+                                cont = False
+                                break
+
+                new_file_section = FileSection(file=file, line_number=fs_line_number, content=content)
+                new_file_section.save()  # TODO category(keyword), status, data
+
+
+
+    return
 
 
 def create_file(request):
@@ -73,11 +128,11 @@ def create_file(request):
     parent_dir = Directory.objects.get(id=request.POST.get('parent_dir'))
     owner = User.objects.get(username=request.POST.get('owner'))
     content = request.POST.get('content')
-    parse_file_content(content)
 
     new_file = File(name=filename, description=description, owner=owner, directory=parent_dir, content=content)
-
     new_file.save()
+
+    parse_file_content(content, new_file)
 
     return HttpResponseRedirect(reverse('index'))
 

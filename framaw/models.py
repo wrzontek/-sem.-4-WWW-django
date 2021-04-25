@@ -60,12 +60,14 @@ class StatusData(models.Model):
 class FileSection(models.Model):
     name = models.CharField(max_length=50, default="")
     description = models.TextField(default="")
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=timezone.now)
+    line_number = models.IntegerField()
+    content = models.TextField()
     file = models.ForeignKey(File, on_delete=models.CASCADE)
 
-    section_category = models.ForeignKey(SectionCategory, on_delete=models.CASCADE)
-    section_status = models.ForeignKey(SectionStatus, on_delete=models.CASCADE)
-    status_data = models.ForeignKey(StatusData, on_delete=models.CASCADE)
+    section_category = models.ForeignKey(SectionCategory, on_delete=models.CASCADE, blank=True, null=True)
+    section_status = models.ForeignKey(SectionStatus, on_delete=models.CASCADE, blank=True, null=True)
+    status_data = models.ForeignKey(StatusData, on_delete=models.CASCADE, blank=True, null=True)
 
     valid = models.BooleanField(default=True)
     timestamp = models.DateTimeField(default=timezone.now)
