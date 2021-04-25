@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Directory(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
     creation_date = models.DateTimeField(default=timezone.now)
     parent_dir = models.ForeignKey('self', on_delete=models.CASCADE, default="", blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -19,10 +19,10 @@ class Directory(models.Model):
 
 class File(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
     creation_date = models.DateTimeField(default=timezone.now)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
-    content = models.CharField(max_length=3000, default="")
+    content = models.TextField(default="")
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     valid = models.BooleanField(default=True)
@@ -49,7 +49,7 @@ class SectionStatus(models.Model):
 
 
 class StatusData(models.Model):
-    data = models.CharField(max_length=200)
+    data = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file_section = models.ForeignKey('FileSection', on_delete=models.CASCADE)
 
@@ -59,7 +59,7 @@ class StatusData(models.Model):
 
 class FileSection(models.Model):
     name = models.CharField(max_length=50, default="")
-    description = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
     creation_date = models.DateTimeField()
     file = models.ForeignKey(File, on_delete=models.CASCADE)
 
