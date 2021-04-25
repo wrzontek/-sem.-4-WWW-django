@@ -1,20 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
-
-class User(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    login = models.CharField(max_length=30, unique=True)
-    password = models.CharField(max_length=30)
-
-    valid = models.BooleanField(default=True)
-    timestamp = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.name
-
-
-# TODO te model.CASCADE wszędzie może do wymiany
+from django.contrib.auth.models import User
 
 
 class Directory(models.Model):
@@ -48,7 +34,6 @@ class File(models.Model):
 
 class SectionCategory(models.Model):
     category = models.CharField(max_length=20)
-    # TODO ^może nie char tylko jakiś wybór czy enum
     file_section = models.ForeignKey('FileSection', on_delete=models.CASCADE)
 
     valid = models.BooleanField(default=True)
@@ -57,7 +42,6 @@ class SectionCategory(models.Model):
 
 class SectionStatus(models.Model):
     status = models.CharField(max_length=20)
-    # TODO ^może nie char tylko jakiś wybór czy enum
     file_section = models.ForeignKey('FileSection', on_delete=models.CASCADE)
 
     valid = models.BooleanField(default=True)
