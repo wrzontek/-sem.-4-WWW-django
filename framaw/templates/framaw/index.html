@@ -20,7 +20,7 @@
     <div class="file_select">
         <ul class="file_list">
             {% for dir in dirs %}
-                {% if dir.valid and dir.parent_dir == null %}
+                {% if dir.parent_dir == null %}
                     <li><b>{{ dir.name }}</b></li>
 
                     <ul class="file_list">

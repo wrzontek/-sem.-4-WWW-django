@@ -63,12 +63,17 @@ def new_file(request):
 #     return index(request)
 
 
+def parse_file_content(content):
+    pass
+
+
 def create_file(request):
     filename = request.POST.get('name')
     description = request.POST.get('description')
     parent_dir = Directory.objects.get(id=request.POST.get('parent_dir'))
     owner = User.objects.get(username=request.POST.get('owner'))
     content = request.POST.get('content')
+    parse_file_content(content)
 
     new_file = File(name=filename, description=description, owner=owner, directory=parent_dir, content=content)
 
@@ -106,8 +111,8 @@ def delete_file(request):
 def do_delete_file(request):
     name = request.POST.get('name')
     file = File.objects.get(name=name)
-    file.delete()
-
+    file.valid = False
+    file.save()
     return HttpResponseRedirect(reverse('index'))
 
 
@@ -116,10 +121,25 @@ def delete_dir(request):
     return render(request, 'framaw/delete_dir.html', context)
 
 
+def recursive_delete_dir(dir_name):
+    dir_to_delete = Directory.objects.get(name=dir_name)
+    if dir_to_delete.valid:
+        for file in File.objects.all():
+            if file.directory == dir_to_delete:
+                file.valid = False
+                file.save()
+
+        for directory in Directory.objects.all():
+            if directory.parent_dir == dir_to_delete and directory.valid:
+                recursive_delete_dir(directory.name)
+
+    dir_to_delete.valid = False
+    dir_to_delete.save()
+
+
 def do_delete_dir(request):
-    name = request.POST.get('name')
-    dir_to_delete = Directory.objects.get(name=name)
-    dir_to_delete.delete()
+    dir_name = request.POST.get('name')
+    recursive_delete_dir(dir_name)
 
     return HttpResponseRedirect(reverse('index'))
 
