@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -9,28 +9,32 @@ from .models import *
 def index(request):
     if request.user.is_authenticated:
         context = {
-            'dirs': Directory.objects.all().filter(valid=True),
-            'files': File.objects.all().filter(valid=True)
+            'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
+            'files': File.objects.all().filter(valid=True, owner=request.user),
+            'display_content': "",
         }
         return render(request, 'framaw/index.html', context)
     else:
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse('index'))
+        if request.POST:
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                return HttpResponse("invalid username or password")
         else:
-            return HttpResponse("invalid username or password")
+            return login_page(request)
 
 
 def login_page(request):
-    context = {}
-    return render(request, 'framaw/login_page.html', context)
+    logout(request)
+    return render(request, 'framaw/login_page.html', {})
 
 
 def new_file(request):
-    context ={'dirs': Directory.objects.all()}
+    context ={'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
     return render(request, 'framaw/new_file.html', context)
 
 
@@ -49,7 +53,7 @@ def create_file(request):
 
 
 def new_directory(request):
-    context ={'dirs': Directory.objects.all().filter(valid=True)}
+    context ={'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
     return render(request, 'framaw/new_directory.html', context)
 
 
@@ -67,3 +71,39 @@ def create_directory(request):
     created_directory.save()
 
     return HttpResponseRedirect(reverse('index'))
+
+
+def delete_file(request):
+    context = {'files': File.objects.all().filter(valid=True, owner=request.user)}
+    return render(request, 'framaw/delete_file.html', context)
+
+
+def do_delete_file(request):
+    name = request.POST.get('name')
+    file = File.objects.get(name=name)
+    file.delete()
+
+    return HttpResponseRedirect(reverse('index'))
+
+
+def delete_dir(request):
+    context = {'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
+    return render(request, 'framaw/delete_dir.html', context)
+
+
+def do_delete_dir(request):
+    name = request.POST.get('name')
+    dir_to_delete = Directory.objects.get(name=name)
+    dir_to_delete.delete()
+
+    return HttpResponseRedirect(reverse('index'))
+
+
+def display_file(request):
+    file = File.objects.get(name=request.GET.get('name'))
+    context = {
+        'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
+        'files': File.objects.all().filter(valid=True, owner=request.user),
+        'display_content': file.content,
+    }
+    return render(request, 'framaw/index.html', context)

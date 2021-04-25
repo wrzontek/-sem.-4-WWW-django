@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Directory(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200, default="")
     creation_date = models.DateTimeField(default=timezone.now)
     parent_dir = models.ForeignKey('self', on_delete=models.CASCADE, default="", blank=True, null=True)
@@ -18,7 +18,7 @@ class Directory(models.Model):
 
 
 class File(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200, default="")
     creation_date = models.DateTimeField(default=timezone.now)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE)

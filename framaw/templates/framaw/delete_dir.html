@@ -1,0 +1,10 @@
+<form action="{% url 'do_delete_dir' %}" method="post">
+{% csrf_token %}
+    Select directory to delete:<br>
+    {% for dir in dirs %}
+        <input type="radio" name="name" id="dir{{ forloop.counter }}" value="{{ dir.name }}">
+        <label for="dir{{ forloop.counter }}">{{ dir.name }}</label><br>
+    {% endfor %}
+<br>
+<input type="submit" value="Delete">
+</form>

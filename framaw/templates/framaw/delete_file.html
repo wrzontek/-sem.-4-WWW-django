@@ -1,0 +1,10 @@
+<form action="{% url 'do_delete_file' %}" method="post">
+{% csrf_token %}
+    Select file to delete:<br>
+    {% for file in files %}
+        <input type="radio" name="name" id="file{{ forloop.counter }}" value="{{ file.name }}">
+        <label for="file{{ forloop.counter }}">{{ file.name }}</label><br>
+    {% endfor %}
+<br>
+<input type="submit" value="Delete">
+</form>

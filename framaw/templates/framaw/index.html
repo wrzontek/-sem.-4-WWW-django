@@ -12,8 +12,8 @@
 <div class="menu_bar">
     <a href="{% url 'new_file' %}">New File</a>
     <a href="{% url 'new_directory' %}">New Directory</a>
-    <a href="">Delete File</a>
-    <a href="">Delete Directory</a>
+    <a href="{% url 'delete_file' %}">Delete File</a>
+    <a href="{% url 'delete_dir' %}">Delete Directory</a>
 </div>
 
 <div class="side">
@@ -26,7 +26,7 @@
                     <ul class="file_list">
                     {% for file in files %}
                         {% if file.directory == dir %}
-                            <li>{{file.name}}</li>
+                            <li><a href="{% url 'display_file' %}?name={{file.name}}">{{ file.name }}</a></li>
                         {% endif %}
                     {% endfor %}
                     </ul>
@@ -43,42 +43,7 @@
 <div class="row">
     <div class="main">
         <div class="text_field">
-            <pre><code>
-int checkPrime(int n);
-
-int main() {
-    int n, i, flag = 0;
-    printf("Enter a positive integer: ");
-    scanf("%d", &n);
-
-    for (i = 2; i <= n / 2; ++i) {
-        // condition for i to be a prime number
-        if (checkPrime(i) == 1) {
-            // condition for n-i to be a prime number
-            if (checkPrime(n - i) == 1) {
-                printf("%d = %d + %d\n", n, i, n - i);
-                flag = 1;
-            }
-        }
-    }
-    if (flag == 0)
-        printf("%d cannot be expressed as the sum of two prime numbers.", n);
-
-    return 0;
-}
-
-// function to check prime number
-int checkPrime(int n) {
-    int i, isPrime = 1;
-    for (i = 2; i <= n / 2; ++i) {
-        if (n % i == 0) {
-            isPrime = 0;
-            break;
-        }
-    }
-    return isPrime;
-}
-            </code></pre>
+            {{ display_content }}
         </div>
     </div>
     <div class="focus">
