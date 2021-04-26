@@ -202,6 +202,7 @@ def do_delete_dir(request):
 def display_file(request):
     file = File.objects.get(name=request.GET.get('name'))
     f = open(file.name, "x")
+    open("result.txt", "x")
     f.write(file.content)
     f.close()
     run = subprocess.run(["frama-c", "-wp", "-wp-print", file.name], capture_output=True, text=True)

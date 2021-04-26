@@ -54,9 +54,9 @@
     </div>
     <div class="tab_data">
         <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'prover_list')">Provers</button>
+            <button class="tablinks active" onclick="openTab(event, 'prover_list')">Provers</button>
             <button>VCs</button>
-            <button>RESULT</button>
+            <button class="tablinks" onclick="openTab(event, 'result_tab')">RESULT</button>
         </div>
 
         <div>
@@ -66,7 +66,7 @@
                 <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=CVC4">CVC4</a></li>
             </ul>
 
-            <div id="result_tab" class="tabcontent">
+            <div id="result_tab" class="tabcontent" style="display: none">
                 {{ result_summary }}
             </div>
         </div>
