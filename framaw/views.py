@@ -46,10 +46,20 @@ keywords = ["predicate", "requires", "ensures", "loop invariant", "loop variant"
 def describe_section(file_section, owner):
     for keyword in keywords:
         if keyword in file_section.content:
-            SectionCategory(category=keyword, file_section=file_section).save()
+            category = SectionCategory(category=keyword, file_section=file_section)
+            category.save()
 
-    SectionStatus(status="unchecked", file_section=file_section).save()
-    StatusData(data="", user=owner, file_section=file_section).save()
+    status = SectionStatus(status="unchecked", file_section=file_section)
+    status_data = StatusData(data="", user=owner, file_section=file_section)
+
+    status.save()
+    status_data.save()
+
+    file_section.status_data = status_data
+    file_section.section_category = category
+    file_section.section_status = status
+
+    file_section.save()
 
     return
 
