@@ -40,31 +40,6 @@ def new_file(request):
     return render(request, 'framaw/new_file.html', context)
 
 
-# def save_file_content(name, f):
-#     with open('some/file/name.txt', 'wb+') as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
-#
-#
-# def upload_file(request):
-#     if request.method == 'POST':
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             filename = request.POST.get('name')
-#             description = request.POST.get('description')
-#             parent_dir = Directory.objects.get(id=request.POST.get('parent_dir'))
-#             owner = User.objects.get(username=request.POST.get('owner'))
-#             content = request.FILES.get('file')
-#
-#             new_file = File(name=filename, description=description, owner=owner, directory=parent_dir, content=content)
-#
-#             new_file.save()
-#
-#             return HttpResponseRedirect('/success/url/')
-#
-#     return index(request)
-
-
 def parse_file_content(content, file):
     buf = io.StringIO(content)
     frama_block = False
@@ -77,7 +52,6 @@ def parse_file_content(content, file):
         if not have_line:
             line = buf.readline()
             line_number += 1
-            line.strip()
         if len(line) == 0:
             break
 
@@ -91,7 +65,7 @@ def parse_file_content(content, file):
         else:
             if "/*@" in line:
                 frama_block = True
-            elif "@*/" in line:
+            elif "@" in line and "*/" in line:
                 frama_block = False
 
             if frama_block:
@@ -102,22 +76,22 @@ def parse_file_content(content, file):
                     content += line
                     line = buf.readline()
                     line_number += 1
-                    line.strip()
-                    if "@*/" in line:
+
+                    if len(line) == 0:
+                        break
+                    if "@" in line and "*/" in line:
                         have_line = True
                         frama_block = False
                         cont = False
                     else:
                         for keyword in keywords:
-                             if keyword in line:
+                            if keyword in line:
                                 have_line = True
                                 cont = False
                                 break
 
                 new_file_section = FileSection(file=file, line_number=fs_line_number, content=content)
                 new_file_section.save()  # TODO category(keyword), status, data
-
-
 
     return
 
