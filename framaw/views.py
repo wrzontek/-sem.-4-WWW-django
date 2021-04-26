@@ -40,12 +40,25 @@ def new_file(request):
     return render(request, 'framaw/new_file.html', context)
 
 
+keywords = ["predicate", "requires", "ensures", "loop invariant", "loop variant", "assert", "assumes"]
+
+
+def describe_section(file_section, owner):
+    for keyword in keywords:
+        if keyword in file_section.content:
+            SectionCategory(category=keyword, file_section=file_section).save()
+
+    SectionStatus(status="unchecked", file_section=file_section).save()
+    StatusData(data="", user=owner, file_section=file_section).save()
+
+    return
+
+
 def parse_file_content(content, file):
     buf = io.StringIO(content)
     frama_block = False
     line_number = 0
     have_line = False
-    keywords = ["predicate", "requires", "ensures", "loop invariant", "loop variant", "assert", "assumes"]
     line = ""
 
     while True:
@@ -92,6 +105,7 @@ def parse_file_content(content, file):
 
                 new_file_section = FileSection(file=file, line_number=fs_line_number, content=content)
                 new_file_section.save()  # TODO category(keyword), status, data
+                describe_section(new_file_section, file.owner)
 
     return
 
