@@ -5,7 +5,6 @@
     {% csrf_token %}
     Select parent directory for new file:<br>
 
-        TODO MOZNA CALA SCIEZKE WYPISAC<br>
         {% for dir in dirs %}
             <input type="radio" name="parent_dir" id="dir{{ forloop.counter }}" value="{{ dir.id }}">
             <label for="dir{{ forloop.counter }}">{{ dir.name }}</label><br>

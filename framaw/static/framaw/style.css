@@ -1,5 +1,7 @@
 :root {
     --font-color: black;
+    --font-hover-color: red;
+    --font-active-color: red;
     --menu-font-color: white;
     --menu: #f2f2f2;
     --menu-border: #f1f1f1;
@@ -19,6 +21,15 @@
     --background-menu-hover: #a7a7a7;
     --background-menu-active: #1c8504;
 }*/
+
+a {
+    color: var(--font-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--font-hover-color);
+}
 
 body {
     color: var(--font-color);
@@ -57,6 +68,7 @@ body {
 .focus {
     padding: 15px;
     overflow: auto;
+    height: calc(75vh - 45px);
 }
 
 .main {
@@ -97,10 +109,10 @@ body {
 }
 
 .tab button.active {
-    background-color: var(--background-menu-active);
+    background-color: var(--background-menu);
 }
 
-.data {
+.tabcontent {
     padding: 5px;
     background-color: var(--background-main);
     overflow: auto;
@@ -109,21 +121,21 @@ body {
 @media all and (max-width: 799px) {
     .main { flex: 100%; }
     .side {
-        height: auto;
+        height: 50vh;
         flex: 100%;
     }
     .focus {
-        height: auto;
+        height: 50vh;
         flex: 100%;
     }
     .tab_data { flex: 100%; }
 }
 
 @media all and (min-width: 800px) {
-    .main { flex: 60%; }
+    .main { flex: 50%; }
     .side {
         float: left;
-        flex: 20%;
+        flex: 25%;
         height: calc(95vh - 45px);
     }
     .focus { flex: 20%; }

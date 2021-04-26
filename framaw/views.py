@@ -1,10 +1,11 @@
 import io
+from pathlib import Path
 
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-
+import subprocess, os
 from .models import *
 
 
@@ -13,7 +14,7 @@ def index(request):
         context = {
             'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
             'files': File.objects.all().filter(valid=True, owner=request.user),
-            'display_content': "",
+            'selected_file': "", 'focus_content': "", 'result_summary': "",
         }
         return render(request, 'framaw/index.html', context)
     else:
@@ -40,7 +41,8 @@ def new_file(request):
     return render(request, 'framaw/new_file.html', context)
 
 
-keywords = ["predicate", "requires", "ensures", "loop invariant", "loop variant", "assert", "assumes"]
+keywords = ["predicate", "requires", "ensures", "loop invariant",
+            "loop variant", "assert", "assumes", "axiomatic"]
 
 
 def describe_section(file_section, owner):
@@ -199,9 +201,18 @@ def do_delete_dir(request):
 
 def display_file(request):
     file = File.objects.get(name=request.GET.get('name'))
+    f = open(file.name, "x")
+    f.write(file.content)
+    f.close()
+    run = subprocess.run(["frama-c", "-wp", "-wp-print", file.name], capture_output=True, text=True)
+    run_summary = subprocess.run(["frama-c", "-wp", '-wp-log="r:result.txt"', file.name], text=True)
+
+    os.remove(file.name)
+    os.remove("result.txt")
     context = {
         'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
         'files': File.objects.all().filter(valid=True, owner=request.user),
-        'display_content': file.content,
+        'selected_file': file, 'focus_content': run.stdout, 'result_summary': run_summary,
     }
+
     return render(request, 'framaw/index.html', context)

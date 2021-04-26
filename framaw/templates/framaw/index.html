@@ -14,6 +14,7 @@
     <a href="{% url 'new_directory' %}">New Directory</a>
     <a href="{% url 'delete_file' %}">Delete File</a>
     <a href="{% url 'delete_dir' %}">Delete Directory</a>
+    <a href="{% url 'delete_dir' %}">Rerun Verification</a>
 </div>
 
 <div class="side">
@@ -43,23 +44,49 @@
 <div class="row">
     <div class="main">
         <div class="text_field">
-            <pre>{{ display_content|linenumbers }}</pre>
+            {% if selected_file != "" %}
+                <pre>{{ selected_file.content|linenumbers }}</pre>
+            {% endif %}
         </div>
     </div>
     <div class="focus">
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        <pre>{{ focus_content|linenumbers }}</pre>
     </div>
     <div class="tab_data">
         <div class="tab">
-            <button>Provers</button>
+            <button class="tablinks" onclick="openTab(event, 'prover_list')">Provers</button>
             <button>VCs</button>
             <button>RESULT</button>
         </div>
-        <div class="data">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+        <div>
+            <ul id="prover_list" class="tabcontent">
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=Alt-Ergo">Alt-Ergo</a></li>
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=Z3">Z3</a></li>
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=CVC4">CVC4</a></li>
+            </ul>
+
+            <div id="result_tab" class="tabcontent">
+                {{ result_summary }}
+            </div>
         </div>
+
     </div>
 </div>
-
+        <script>
+        function openTab(event, selected) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(selected).style.display = "block";
+            event.currentTarget.className += " active";
+        }
+        </script>
 </body>
 </html>
