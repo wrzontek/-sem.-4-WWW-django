@@ -61,9 +61,9 @@
 
         <div>
             <ul id="prover_list" class="tabcontent">
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=Alt-Ergo">Alt-Ergo</a></li>
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=Z3">Z3</a></li>
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&selected_prover=CVC4">CVC4</a></li>
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=Alt-Ergo">Alt-Ergo</a></li>
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=Z3">Z3</a></li>
+                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=CVC4">CVC4</a></li>
             </ul>
 
             <div id="result_tab" class="tabcontent" style="display: none">

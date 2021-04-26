@@ -9,6 +9,9 @@ import subprocess, os
 from .models import *
 
 
+RTE = False
+props = []
+
 def index(request):
     if request.user.is_authenticated:
         context = {
@@ -202,18 +205,23 @@ def do_delete_dir(request):
 def display_file(request):
     file = File.objects.get(name=request.GET.get('name'))
     f = open(file.name, "x")
-    open("result.txt", "x")
     f.write(file.content)
     f.close()
-    run = subprocess.run(["frama-c", "-wp", "-wp-print", file.name], capture_output=True, text=True)
-    run_summary = subprocess.run(["frama-c", "-wp", '-wp-log="r:result.txt"', file.name], text=True)
 
-    os.remove(file.name)
-    os.remove("result.txt")
+
+    run = subprocess.run(["frama-c", "-wp", "-wp-print", file.name], capture_output=True, text=True)
+    run2 = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.name], capture_output=True, text=True)
+    f_results = open("result.txt", "r")
+
     context = {
         'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
         'files': File.objects.all().filter(valid=True, owner=request.user),
-        'selected_file': file, 'focus_content': run.stdout, 'result_summary': run_summary,
+        'selected_file': file, 'focus_content': run.stdout, 'result_summary': f_results.read(),
     }
 
+    f_results.close()
+    os.remove(file.name)
+    os.remove("result.txt")
+
     return render(request, 'framaw/index.html', context)
+
