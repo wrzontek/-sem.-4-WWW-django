@@ -93,7 +93,6 @@ body {
 }
 
 .tab {
-    overflow: auto;
     background-color: var(--background-sides);
 }
 

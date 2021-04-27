@@ -14,7 +14,9 @@
     <a href="{% url 'new_directory' %}">New Directory</a>
     <a href="{% url 'delete_file' %}">Delete File</a>
     <a href="{% url 'delete_dir' %}">Delete Directory</a>
-    <a href="{% url 'delete_dir' %}">Rerun Verification</a>
+    {% if request.GET.prover %}
+        <a href="{% url 'delete_dir' %}">Rerun Verification</a>
+    {% endif %}
 </div>
 
 <div class="side">
@@ -55,19 +57,33 @@
     <div class="tab_data">
         <div class="tab">
             <button class="tablinks active" onclick="openTab(event, 'prover_list')">Provers</button>
-            <button>VCs</button>
+            <button class="tablinks" onclick="openTab(event, 'vc_tab')">VCs</button>
             <button class="tablinks" onclick="openTab(event, 'result_tab')">RESULT</button>
         </div>
 
         <div>
-            <ul id="prover_list" class="tabcontent">
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=Alt-Ergo">Alt-Ergo</a></li>
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=Z3">Z3</a></li>
-                <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover=CVC4">CVC4</a></li>
+            <ul id="prover_tab" class="tabcontent">
+            {% for prover in provers %}
+                {% if request.GET.rte %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}">{{ prover }}</a></li>
+                {% else %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}&rte={{ request.get.rte }}">{{ prover }}</a></li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+
+            <ul id="vc_tab" class="tabcontent">
+                {% if request.GET.prover %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.get.prower }}&rte=on">ON</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.get.prower }}&rte=off">OFF</a></li>
+                {% else %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=on">ON</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=off">OFF</a></li>
+                {% endif %}
             </ul>
 
             <div id="result_tab" class="tabcontent" style="display: none">
-                {{ result_summary }}
+                <pre>{{ result_summary }}</pre>
             </div>
         </div>
 

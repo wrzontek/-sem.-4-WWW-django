@@ -11,13 +11,14 @@ from .models import *
 
 RTE = False
 props = []
+provers = ["alt-ergo", "z3", "cvc4"]
 
 def index(request):
     if request.user.is_authenticated:
         context = {
             'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
             'files': File.objects.all().filter(valid=True, owner=request.user),
-            'selected_file': "", 'focus_content': "", 'result_summary': "",
+            'selected_file': "", 'focus_content': "", 'result_summary': "", 'provers': provers,
         }
         return render(request, 'framaw/index.html', context)
     else:
@@ -217,6 +218,7 @@ def display_file(request):
         'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
         'files': File.objects.all().filter(valid=True, owner=request.user),
         'selected_file': file, 'focus_content': run.stdout, 'result_summary': f_results.read(),
+        'provers': provers,
     }
 
     f_results.close()
