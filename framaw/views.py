@@ -8,10 +8,10 @@ from django.urls import reverse
 import subprocess, os
 from .models import *
 
-
 RTE = False
 props = []
 provers = ["alt-ergo", "z3", "cvc4"]
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -41,7 +41,7 @@ def login_page(request):
 
 
 def new_file(request):
-    context ={'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
+    context = {'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
     return render(request, 'framaw/new_file.html', context)
 
 
@@ -101,7 +101,7 @@ def parse_file_content(content, file):
                 content = ""
                 cont = True
                 fs_line_number = line_number
-                while cont:     # kończymy sekcję gdy napotkamy kolejną lub koniec bloku
+                while cont:  # kończymy sekcję gdy napotkamy kolejną lub koniec bloku
                     content += line
                     line = buf.readline()
                     line_number += 1
@@ -142,7 +142,7 @@ def create_file(request):
 
 
 def new_directory(request):
-    context ={'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
+    context = {'dirs': Directory.objects.all().filter(valid=True, owner=request.user)}
     return render(request, 'framaw/new_directory.html', context)
 
 
@@ -205,13 +205,20 @@ def do_delete_dir(request):
 
 def display_file(request):
     file = File.objects.get(name=request.GET.get('name'))
+    args = ["frama-c", "-wp", "-wp-print", file.name]
+    if 'prover' in request.GET and 'rte' in request.GET:
+        args = ["frama-c", "-wp", "-wp-prover", request.GET['prover'], "-wp-rte", file.name]
+    elif 'prover' in request.GET:
+        args = ["frama-c", "-wp", "-wp-prover", request.GET['prover'], file.name]
+    elif 'rte' in request.GET:
+        args = ["frama-c", "-wp", "-wp-rte", file.name]
+
     f = open(file.name, "x")
     f.write(file.content)
     f.close()
 
-
-    run = subprocess.run(["frama-c", "-wp", "-wp-print", file.name], capture_output=True, text=True)
-    run2 = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.name], capture_output=True, text=True)
+    run = subprocess.run(args, capture_output=True, text=True)
+    subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.name], capture_output=True, text=True)
     f_results = open("result.txt", "r")
 
     context = {

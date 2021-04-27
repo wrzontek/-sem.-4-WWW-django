@@ -14,8 +14,16 @@
     <a href="{% url 'new_directory' %}">New Directory</a>
     <a href="{% url 'delete_file' %}">Delete File</a>
     <a href="{% url 'delete_dir' %}">Delete Directory</a>
-    {% if request.GET.prover %}
-        <a href="{% url 'delete_dir' %}">Rerun Verification</a>
+    {% if 'prover' in request.GET or 'rte' in request.GET %}
+        {% if 'name' in request.GET and request.GET.name != "" %}
+            {% if 'prover' in request.GET and 'rte' in request.GET %}
+                <a href="{% url 'display_file' %}?name={{selected_file.name}}&prover={{ request.GET.prover }}&rte=on">Rerun Verification</a>
+            {% elif 'prover' in request.GET %}
+                <a href="{% url 'display_file' %}?name={{selected_file.name}}&prover={{ request.GET.prover }}">Rerun Verification</a>
+            {% else %}
+                <a href="{% url 'display_file' %}?name={{selected_file.name}}&rte=on">Rerun Verification</a>
+            {% endif %}
+        {% endif %}
     {% endif %}
 </div>
 
@@ -56,7 +64,7 @@
     </div>
     <div class="tab_data">
         <div class="tab">
-            <button class="tablinks active" onclick="openTab(event, 'prover_list')">Provers</button>
+            <button class="tablinks active" onclick="openTab(event, 'prover_tab')">Provers</button>
             <button class="tablinks" onclick="openTab(event, 'vc_tab')">VCs</button>
             <button class="tablinks" onclick="openTab(event, 'result_tab')">RESULT</button>
         </div>
@@ -64,21 +72,21 @@
         <div>
             <ul id="prover_tab" class="tabcontent">
             {% for prover in provers %}
-                {% if request.GET.rte %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}">{{ prover }}</a></li>
+                {% if 'rte' in request.GET %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}&rte={{ request.GET.rte }}">{{ prover }}</a></li>
                 {% else %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}&rte={{ request.get.rte }}">{{ prover }}</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}">{{ prover }}</a></li>
                 {% endif %}
             {% endfor %}
             </ul>
 
-            <ul id="vc_tab" class="tabcontent">
-                {% if request.GET.prover %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.get.prower }}&rte=on">ON</a></li>
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.get.prower }}&rte=off">OFF</a></li>
+            <ul id="vc_tab" class="tabcontent" style="display: none">
+                {% if 'prover' in request.GET %}
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">ON</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">OFF</a></li>
                 {% else %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=on">ON</a></li>
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=off">OFF</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=on">RTE ON</a></li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}">RTE OFF</a></li>
                 {% endif %}
             </ul>
 
