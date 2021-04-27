@@ -46,7 +46,7 @@ def new_file(request):
 
 
 keywords = ["predicate", "requires", "ensures", "loop invariant",
-            "loop variant", "assert", "assumes", "axiomatic"]
+            "loop variant", "assert", "assumes", "axiomatic", "logic"]
 
 
 def describe_section(file_section, owner):
