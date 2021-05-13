@@ -7,24 +7,72 @@
     <title>Frama-Web</title>
     <link rel="stylesheet" type="text/css" href="{% static 'framaw/style.css' %}">
 </head>
+<script>
+    var prover = "default";
+    var rte = "off";
 
+    function updateRerunLink() {
+        link = document.getElementById('rerun_link').href;
+        i = link.lastIndexOf('prover=');
+        link = link.substring(0, i);
+        link += 'prover=' + prover + "&rte=" + rte;
+        document.getElementById('rerun_link').href = link;
+    }
+
+    function changeProver(newProver) {
+        prover = newProver;
+        document.getElementById('prover_span').innerHTML = prover;
+        updateRerunLink();
+    }
+
+    function changeRTE() {
+        if (rte === "off")
+            rte = "on";
+        else
+            rte = "off";
+
+        document.getElementById('rte_span').innerHTML = rte;
+        updateRerunLink();
+    }
+
+    function openTab(event, selected) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(selected).style.display = "block";
+        event.currentTarget.className += " active";
+    }
+</script>
 <body>
+
+
 <div class="menu_bar">
     <a href="{% url 'new_file' %}">New File</a>
     <a href="{% url 'new_directory' %}">New Directory</a>
     <a href="{% url 'delete_file' %}">Delete File</a>
     <a href="{% url 'delete_dir' %}">Delete Directory</a>
-    {% if 'prover' in request.GET or 'rte' in request.GET %}
+    <a id="rerun_link" href="{% url 'display_file' %}?name={{ selected_file.name }}&prover=default&rte=off">
+        Rerun Verification
+    </a>
+{% comment %}    {% if 'prover' in request.GET or 'rte' in request.GET %}
         {% if 'name' in request.GET and request.GET.name != "" %}
             {% if 'prover' in request.GET and 'rte' in request.GET %}
-                <a href="{% url 'display_file' %}?name={{selected_file.name}}&prover={{ request.GET.prover }}&rte=on">Rerun Verification</a>
+                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">Rerun
+                    Verification</a>
             {% elif 'prover' in request.GET %}
-                <a href="{% url 'display_file' %}?name={{selected_file.name}}&prover={{ request.GET.prover }}">Rerun Verification</a>
+                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">Rerun
+                    Verification</a>
             {% else %}
-                <a href="{% url 'display_file' %}?name={{selected_file.name}}&rte=on">Rerun Verification</a>
+                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&rte=on">Rerun Verification</a>
             {% endif %}
         {% endif %}
-    {% endif %}
+    {% endif %}{% endcomment %}
 </div>
 
 <div class="side">
@@ -35,11 +83,11 @@
                     <li><b>{{ dir.name }}</b></li>
 
                     <ul class="file_list">
-                    {% for file in files %}
-                        {% if file.directory == dir %}
-                            <li><a href="{% url 'display_file' %}?name={{file.name}}">{{ file.name }}</a></li>
-                        {% endif %}
-                    {% endfor %}
+                        {% for file in files %}
+                            {% if file.directory == dir %}
+                                <li><a href="{% url 'display_file' %}?name={{ file.name }}">{{ file.name }}</a></li>
+                            {% endif %}
+                        {% endfor %}
                     </ul>
 
                     <ul class="file_list">
@@ -71,23 +119,34 @@
 
         <div>
             <ul id="prover_tab" class="tabcontent">
-            {% for prover in provers %}
-                {% if 'rte' in request.GET %}
+                selected: <span id="prover_span">default</span>
+                {% for p in provers %}
+                    <li>
+                        <button type="button" onclick="changeProver('{{ p }}')">{{ p }}</button>
+                    </li>
+                    {% comment %}           {% if 'rte' in request.GET %}
                     <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}&rte={{ request.GET.rte }}">{{ prover }}</a></li>
                 {% else %}
                     <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}">{{ prover }}</a></li>
-                {% endif %}
-            {% endfor %}
+                {% endif %}{% endcomment %}
+                {% endfor %}
             </ul>
 
             <ul id="vc_tab" class="tabcontent" style="display: none">
-                {% if 'prover' in request.GET %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">ON</a></li>
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">OFF</a></li>
+                RTE currently <span id="rte_span">off</span>
+                <li>
+                    <button type="button" onclick="changeRTE()">Switch</button>
+                </li>
+{% comment %}                {% if 'prover' in request.GET %}
+                    <li>
+                        <a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">ON</a>
+                    </li>
+                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">OFF</a>
+                    </li>
                 {% else %}
                     <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=on">RTE ON</a></li>
                     <li><a href="{{ request.get_path }}?name={{ selected_file.name }}">RTE OFF</a></li>
-                {% endif %}
+                {% endif %}{% endcomment %}
             </ul>
 
             <div id="result_tab" class="tabcontent" style="display: none">
@@ -97,20 +156,5 @@
 
     </div>
 </div>
-        <script>
-        function openTab(event, selected) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(selected).style.display = "block";
-            event.currentTarget.className += " active";
-        }
-        </script>
 </body>
 </html>

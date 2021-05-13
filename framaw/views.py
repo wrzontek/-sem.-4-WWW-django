@@ -130,10 +130,9 @@ def create_file(request):
     filename = request.POST.get('name')
     description = request.POST.get('description')
     parent_dir = Directory.objects.get(id=request.POST.get('parent_dir'))
-    owner = User.objects.get(username=request.POST.get('owner'))
     content = request.POST.get('content')
 
-    new_file = File(name=filename, description=description, owner=owner, directory=parent_dir, content=content)
+    new_file = File(name=filename, description=description, owner=request.user, directory=parent_dir, content=content)
     new_file.save()
 
     parse_file_content(content, new_file)
@@ -149,13 +148,12 @@ def new_directory(request):
 def create_directory(request):
     name = request.POST.get('name')
     description = request.POST.get('description')
-    owner = User.objects.get(username=request.POST.get('owner'))
 
     if request.POST.get('parent_dir') == "":
-        created_directory = Directory(name=name, description=description, owner=owner)
+        created_directory = Directory(name=name, description=description, owner=request.user)
     else:
         parent_dir = Directory.objects.get(id=request.POST.get('parent_dir'))
-        created_directory = Directory(name=name, description=description, owner=owner, parent_dir=parent_dir)
+        created_directory = Directory(name=name, description=description, owner=request.user, parent_dir=parent_dir)
 
     created_directory.save()
 
