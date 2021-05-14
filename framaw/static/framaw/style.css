@@ -1,7 +1,6 @@
 :root {
     --font-color: black;
     --font-hover-color: red;
-    --font-active-color: red;
     --menu-font-color: white;
     --menu: #f2f2f2;
     --menu-border: #f1f1f1;
@@ -13,6 +12,7 @@
 }
 /*:root {
     --font-color: #1c8504;
+    --font-hover-color: red;
     --menu-font-color: #1c8504;
     --menu-border: #2d2b2b;
     --background-sides: #2d2b2b;

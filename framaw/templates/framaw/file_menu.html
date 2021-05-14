@@ -1,3 +1,12 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'framaw/style.css' %}">
+</head>
+<body>
 {% for dir in dirs %}
     {% if dir.parent_dir|stringformat:"s" == parent|stringformat:"s" %}
         <li>
@@ -16,3 +25,4 @@
         </li>
     {% endif %}
 {% endfor %}
+</body>

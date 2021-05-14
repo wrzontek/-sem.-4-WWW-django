@@ -111,11 +111,6 @@
                     <li>
                         <button type="button" onclick="changeProver('{{ p }}')">{{ p }}</button>
                     </li>
-                    {% comment %}           {% if 'rte' in request.GET %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}&rte={{ request.GET.rte }}">{{ prover }}</a></li>
-                {% else %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ prover }}">{{ prover }}</a></li>
-                {% endif %}{% endcomment %}
                 {% endfor %}
             </ul>
 
@@ -124,16 +119,6 @@
                 <li>
                     <button type="button" onclick="changeRTE()">Switch</button>
                 </li>
-{% comment %}                {% if 'prover' in request.GET %}
-                    <li>
-                        <a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">ON</a>
-                    </li>
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">OFF</a>
-                    </li>
-                {% else %}
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}&rte=on">RTE ON</a></li>
-                    <li><a href="{{ request.get_path }}?name={{ selected_file.name }}">RTE OFF</a></li>
-                {% endif %}{% endcomment %}
             </ul>
 
             <div id="result_tab" class="tabcontent" style="display: none">
