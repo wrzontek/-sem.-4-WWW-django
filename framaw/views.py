@@ -204,11 +204,12 @@ def do_delete_dir(request):
 def display_file(request):
     file = File.objects.get(name=request.GET.get('name'))
     args = ["frama-c", "-wp", "-wp-print", file.name]
-    if 'prover' in request.GET and 'rte' in request.GET:
+
+    if ('prover' in request.GET and request.GET['prover'] != "default") and ('rte' in request.GET and request.GET['rte'] != "off"):
         args = ["frama-c", "-wp", "-wp-prover", request.GET['prover'], "-wp-rte", file.name]
-    elif 'prover' in request.GET:
+    elif 'prover' in request.GET and request.GET['prover'] != "default":
         args = ["frama-c", "-wp", "-wp-prover", request.GET['prover'], file.name]
-    elif 'rte' in request.GET:
+    elif 'rte' in request.GET and request.GET['rte'] != "off":
         args = ["frama-c", "-wp", "-wp-rte", file.name]
 
     f = open(file.name, "x")

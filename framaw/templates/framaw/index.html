@@ -60,19 +60,6 @@
     <a id="rerun_link" href="{% url 'display_file' %}?name={{ selected_file.name }}&prover=default&rte=off">
         Rerun Verification
     </a>
-{% comment %}    {% if 'prover' in request.GET or 'rte' in request.GET %}
-        {% if 'name' in request.GET and request.GET.name != "" %}
-            {% if 'prover' in request.GET and 'rte' in request.GET %}
-                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&prover={{ request.GET.prover }}&rte=on">Rerun
-                    Verification</a>
-            {% elif 'prover' in request.GET %}
-                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&prover={{ request.GET.prover }}">Rerun
-                    Verification</a>
-            {% else %}
-                <a href="{% url 'display_file' %}?name={{ selected_file.name }}&rte=on">Rerun Verification</a>
-            {% endif %}
-        {% endif %}
-    {% endif %}{% endcomment %}
 </div>
 
 <div class="side">
