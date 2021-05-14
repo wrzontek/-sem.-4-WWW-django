@@ -8,6 +8,46 @@ from django.utils import timezone
 from .models import *
 from .views import *
 
+example_content = R'''/*@ predicate Sorted{L}(int *a, integer l, integer h) =
+  @   \forall integer i,j; l <= i <= j < h ==> a[i] <= a[j] ;
+  @*/
+
+/*@ requires \valid_range(t,0,n-1);
+  @ ensures Sorted(t,0,n-1);
+  @*/
+void insert_sort(int t[], int n) {
+  int i,j;
+  int mv;
+  if (n <= 1) return;
+  /*@ loop invariant 0 <= i <= n;
+    @ loop invariant Sorted(t,0,i);
+    @ loop variant n-i;
+    @*/
+  for (i=1; i<n; i++) {
+    // assuming t[0..i-1] is sorted, insert t[i] at the right place
+    mv = t[i]; 
+    /*@ loop invariant 0 <= j <= i;
+      @ loop invariant j == i ==> Sorted(t,0,i);
+      @ loop invariant j < i ==> Sorted(t,0,i+1);
+      @ loop invariant \forall integer k; j <= k < i ==> t[k] > mv;
+      @ loop variant j;
+      @*/
+    // look for the right index j to put t[i]
+    for (j=i; j > 0; j--) {
+      if (t[j-1] <= mv) break;
+      t[j] = t[j-1];
+    }
+    t[j] = mv;
+  }
+}
+
+
+/*
+Local Variables:
+compile-command: "frama-c -jessie insertion_sort.c"
+End:
+*/
+'''
 
 class ModelTests(TestCase):
 
@@ -141,49 +181,29 @@ class ViewsTests(TestCase):
         user.save()
         dir.save()
         file = File(name="test_file", description="test_desc", owner=dir.owner, directory=dir,
-             content=R'''/*@ predicate Sorted{L}(int *a, integer l, integer h) =
-  @   \forall integer i,j; l <= i <= j < h ==> a[i] <= a[j] ;
-  @*/
-
-/*@ requires \valid_range(t,0,n-1);
-  @ ensures Sorted(t,0,n-1);
-  @*/
-void insert_sort(int t[], int n) {
-  int i,j;
-  int mv;
-  if (n <= 1) return;
-  /*@ loop invariant 0 <= i <= n;
-    @ loop invariant Sorted(t,0,i);
-    @ loop variant n-i;
-    @*/
-  for (i=1; i<n; i++) {
-    // assuming t[0..i-1] is sorted, insert t[i] at the right place
-    mv = t[i]; 
-    /*@ loop invariant 0 <= j <= i;
-      @ loop invariant j == i ==> Sorted(t,0,i);
-      @ loop invariant j < i ==> Sorted(t,0,i+1);
-      @ loop invariant \forall integer k; j <= k < i ==> t[k] > mv;
-      @ loop variant j;
-      @*/
-    // look for the right index j to put t[i]
-    for (j=i; j > 0; j--) {
-      if (t[j-1] <= mv) break;
-      t[j] = t[j-1];
-    }
-    t[j] = mv;
-  }
-}
-
-
-/*
-Local Variables:
-compile-command: "frama-c -jessie insertion_sort.c"
-End:
-*/
-''')
+             content=example_content)
         file.save()
 
         response = c.post('/framaw/', {'username': 'usr', 'password': 'password123'})
         self.assertEqual(response.status_code, 302)
         response = c.get('/framaw/display_file/', {'name': 'test_file'})
         self.assertEqual(response.status_code, 200)
+
+    def test_parse_file(self):
+        c = Client()
+        user = User.objects.create_user(username="usr", password="password123")
+        dir = Directory(name="test_dir", description="test_desc", owner=user)
+        user.save()
+        dir.save()
+        file = File(name="test_file", description="test_desc", owner=dir.owner, directory=dir,
+             content=example_content)
+        file.save()
+
+        response = c.post('/framaw/', {'username': 'usr', 'password': 'password123'})
+        self.assertEqual(response.status_code, 302)
+
+        parse_file_content(file.content, file)
+
+        self.assertEqual(len(FileSection.objects.all()), 11)
+        self.assertEqual(len(SectionStatus.objects.all()), 11)
+        self.assertEqual(len(StatusData.objects.all()), 11)
