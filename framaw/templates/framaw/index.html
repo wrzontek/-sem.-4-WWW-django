@@ -53,15 +53,20 @@
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
              if (this.readyState === 4 && this.status === 200) {
-                 var main_start = this.responseText.lastIndexOf("main_text_field")
-                 var main_end = this.responseText.lastIndexOf('class="focus"')
+                 var main_start = this.responseText.lastIndexOf("main_text_field") + 17;
+                 var main_end = this.responseText.lastIndexOf('class="focus"') - 10;
                  document.getElementById("main_text_field").innerHTML =
-                     this.responseText.slice(main_start + 17, main_end - 10);
-                 
-                 var focus_start = main_end + 31;
-                 var focus_end = this.responseText.lastIndexOf('class="tab_data"')
+                     this.responseText.slice(main_start, main_end);
+
+                 var focus_start = main_end + 41;
+                 var focus_end = this.responseText.lastIndexOf('class="tab_data"') - 10;
                  document.getElementById("focus_field").innerHTML =
-                     this.responseText.slice(focus_start, focus_end - 10);
+                     this.responseText.slice(focus_start, focus_end);
+
+                 var result_start = this.responseText.lastIndexOf('id="result_tab"') + 57;
+                 var result_end = this.responseText.lastIndexOf('/html>') - 10;
+                 document.getElementById("result_tab").innerHTML =
+                     this.responseText.slice(result_start, result_end);
              }
         };
         var url = "/framaw/display_file/?name=" + file;
