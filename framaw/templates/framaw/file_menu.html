@@ -15,7 +15,11 @@
             <ul class="file_list">
                 {% for file in files %}
                     {% if file.directory == dir %}
-                            <li><a href="{% url 'display_file' %}?name={{file.name}}">{{ file.name }}</a></li>                    {% endif %}
+                        <li><button type="button" onclick="changeFile('{{ file.name }}')">{{ file.name }}</button></li>
+                        {% comment %}
+                        <li><a href="{% url 'display_file' %}?name={{file.name}}">{{ file.name }}</a></li>
+                        {% endcomment %}
+                    {% endif %}
                 {% endfor %}
             </ul>
 

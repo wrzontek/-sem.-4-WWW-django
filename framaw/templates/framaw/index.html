@@ -48,6 +48,26 @@
         document.getElementById(selected).style.display = "block";
         event.currentTarget.className += " active";
     }
+
+    function changeFile(file) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+             if (this.readyState === 4 && this.status === 200) {
+                 var main_start = this.responseText.lastIndexOf("main_text_field")
+                 var main_end = this.responseText.lastIndexOf('class="focus"')
+                 document.getElementById("main_text_field").innerHTML =
+                     this.responseText.slice(main_start + 17, main_end - 10);
+                 
+                 var focus_start = main_end + 31;
+                 var focus_end = this.responseText.lastIndexOf('class="tab_data"')
+                 document.getElementById("focus_field").innerHTML =
+                     this.responseText.slice(focus_start, focus_end - 10);
+             }
+        };
+        var url = "/framaw/display_file/?name=" + file;
+        xhttp.open("GET", url, true);
+        xhttp.send();
+    }
 </script>
 <body>
 
@@ -60,6 +80,7 @@
     <a id="rerun_link" href="{% url 'display_file' %}?name={{ selected_file.name }}&prover=default&rte=off">
         Rerun Verification
     </a>
+    <a href="{% url 'login' %}">Change User</a>
 </div>
 
 <div class="side">
@@ -72,7 +93,10 @@
                     <ul class="file_list">
                         {% for file in files %}
                             {% if file.directory == dir %}
+                                {% comment %}
                                 <li><a href="{% url 'display_file' %}?name={{ file.name }}">{{ file.name }}</a></li>
+                                {% endcomment %}
+                                <li><button type="button" onclick="changeFile('{{ file.name }}')">{{ file.name }}</button></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -88,13 +112,13 @@
 
 <div class="row">
     <div class="main">
-        <div class="text_field">
+        <div class="text_field" id="main_text_field">
             {% if selected_file != "" %}
                 <pre>{{ selected_file.content|linenumbers }}</pre>
             {% endif %}
         </div>
     </div>
-    <div class="focus">
+    <div class="focus" id="focus_field">
         <pre>{{ focus_content|linenumbers }}</pre>
     </div>
     <div class="tab_data">
