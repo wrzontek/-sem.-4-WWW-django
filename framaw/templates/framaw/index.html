@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'framaw/style.css' %}">
     <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
     <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+    <link rel="stylesheet" href="{% static 'codemirror/theme/eclipse.css' %}">
     <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
 </head>
 <script>
@@ -69,7 +70,7 @@
                  document.getElementById("result_tab").innerHTML =
                      this.responseText.slice(result_start, result_end);
 
-                 content = this.responseText.slice(main_start, main_end);
+                 content = this.responseText.slice(main_start, main_end - 16);
                  displayEditor();
              }
         };
@@ -79,11 +80,14 @@
     }
 
     function displayEditor() {
+            document.getElementById('main_text_field').innerHTML = "";
+
             let editor = CodeMirror(document.querySelector('#main_text_field'), {
                 lineNumbers: true,
                 readOnly: true,
                 mode: 'javascript',
-                theme: 'abbott'
+                theme: 'eclipse',
+                viewportMargin: Infinity,
             });
             editor.setValue(content);
     }

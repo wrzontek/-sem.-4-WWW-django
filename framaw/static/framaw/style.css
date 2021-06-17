@@ -117,6 +117,10 @@ body {
     overflow: auto;
 }
 
+.CodeMirror {
+    height: auto;
+}
+
 @media all and (max-width: 799px) {
     .main { flex: 100%; }
     .side {
