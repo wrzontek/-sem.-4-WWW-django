@@ -19,6 +19,7 @@ def index(request):
             'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
             'files': File.objects.all().filter(valid=True, owner=request.user),
             'selected_file': "", 'focus_content': "", 'result_summary': "", 'provers': provers,
+            'content': "",
         }
         return render(request, 'framaw/index.html', context)
     else:
@@ -220,11 +221,14 @@ def display_file(request):
     subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.name], capture_output=True, text=True)
     f_results = open("result.txt", "r")
 
+
+    print("CONTENT: ")
+    print(str(file.content))
     context = {
         'dirs': Directory.objects.all().filter(valid=True, owner=request.user),
         'files': File.objects.all().filter(valid=True, owner=request.user),
         'selected_file': file, 'focus_content': run.stdout, 'result_summary': f_results.read(),
-        'provers': provers,
+        'provers': provers, 'content': str(file.content),
     }
 
     f_results.close()

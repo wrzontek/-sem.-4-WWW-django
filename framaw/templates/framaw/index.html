@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Frama-Web</title>
     <link rel="stylesheet" type="text/css" href="{% static 'framaw/style.css' %}">
+    <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+    <script src="{% static 'codemirror/mode/javascript/javascript.js' %}"></script>
 </head>
 <script>
     var prover = "default";
     var rte = "off";
-
+    var file_content = "";
     function updateRerunLink() {
         link = document.getElementById('rerun_link').href;
         i = link.lastIndexOf('prover=');
@@ -55,8 +58,6 @@
              if (this.readyState === 4 && this.status === 200) {
                  var main_start = this.responseText.lastIndexOf("main_text_field") + 17;
                  var main_end = this.responseText.lastIndexOf('class="focus"') - 10;
-                 document.getElementById("main_text_field").innerHTML =
-                     this.responseText.slice(main_start, main_end);
 
                  var focus_start = main_end + 41;
                  var focus_end = this.responseText.lastIndexOf('class="tab_data"') - 10;
@@ -67,11 +68,24 @@
                  var result_end = this.responseText.lastIndexOf('/html>') - 10;
                  document.getElementById("result_tab").innerHTML =
                      this.responseText.slice(result_start, result_end);
+
+                 content = this.responseText.slice(main_start, main_end);
+                 displayEditor();
              }
         };
         var url = "/framaw/display_file/?name=" + file;
         xhttp.open("GET", url, true);
         xhttp.send();
+    }
+
+    function displayEditor() {
+            let editor = CodeMirror(document.querySelector('#main_text_field'), {
+                lineNumbers: true,
+                readOnly: true,
+                mode: 'javascript',
+                theme: 'abbott'
+            });
+            editor.setValue(content);
     }
 </script>
 <body>
@@ -117,11 +131,7 @@
 
 <div class="row">
     <div class="main">
-        <div class="text_field" id="main_text_field">
-            {% if selected_file != "" %}
-                <pre>{{ selected_file.content|linenumbers }}</pre>
-            {% endif %}
-        </div>
+        <div id="main_text_field">{{ content }}</div>
     </div>
     <div class="focus" id="focus_field">
         <pre>{{ focus_content|linenumbers }}</pre>
@@ -159,3 +169,4 @@
 </div>
 </body>
 </html>
+
